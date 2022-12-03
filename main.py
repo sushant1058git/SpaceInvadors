@@ -41,7 +41,16 @@ bullet_x_change= 0
 bullet_y_change= .8
 bullet_state='ready' #ready state means you cant see bullet on screen
 # bullet_state='fire' #Bullet is moving currently
+
+#Score
 score=0
+font=pygame.font.Font('freesansbold.ttf',32)
+font_x=10
+font_y=10
+
+#Game over text
+over_font=pygame.font.Font('freesansbold.ttf',64)
+    
 
 #collision Function
 def iscollision(enemy_x,enemy_y,bullet_x,bullet_y):
@@ -59,6 +68,10 @@ player_y=480
 player_x_change=0
 
 
+def showScore(x,y):
+    total_score=font.render("Score : " + str(score),True,(255,255,255))
+    screen.blit(total_score,(x,y))
+
 def player(x,y):
     screen.blit(playerImg,(x,y))
     
@@ -69,6 +82,12 @@ def fire_bullet(x,y):
     global bullet_state
     bullet_state='fire'
     screen.blit(bulletImg,((x+16),(y+10)))
+    
+def game_over_text():
+    over_score=font.render("Game Over" ,True,(255,255,255))
+    screen.blit(over_score,(300,250))
+    
+    
 
 #Game loop
 running=True 
@@ -104,6 +123,14 @@ while running:
         player_x = 736
     
     for i in range(num_of_enemies): 
+        #Game Over
+        if enemy_y[i]>440:
+            for j in range(num_of_enemies):
+                enemy_y[j]=2000 #disappear all enemies
+            game_over_text()
+            break
+        
+        
         enemy_x[i] += enemy_x_change[i]
         if enemy_x[i] <= 0:
             enemy_x_change[i] = 0.1
@@ -118,7 +145,6 @@ while running:
             bullet_y=480
             bullet_state='ready'
             score+=1
-            print(score)
             enemy_x[i]=random.randint(0,735)
             enemy_y[i]=random.randint(40,150)
         
@@ -137,5 +163,6 @@ while running:
         
         
     player(player_x,player_y)
+    showScore(font_x,font_y)
     pygame.display.update()
     
